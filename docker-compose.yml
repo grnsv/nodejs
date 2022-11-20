@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  node:
+    container_name: node
+    image: node:lts
+    tty: true
+    restart: unless-stopped
+    working_dir: /home/node/app
+    volumes:
+      - .:/home/node/app
+    networks:
+      - node
+
+networks:
+  node:
+    driver: bridge
