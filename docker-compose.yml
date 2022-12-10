@@ -10,6 +10,8 @@ services:
       - .:/home/node/app
     networks:
       - node
+    ports:
+      - 3000:3000
 
 networks:
   node:
