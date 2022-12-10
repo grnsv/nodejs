@@ -1,3 +1,3 @@
-import lesson2 from './lessons/lesson-2/index.js';
+import lesson3 from './lessons/lesson-3/index.js';
 
-lesson2();
+lesson3();
