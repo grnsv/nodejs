@@ -1,0 +1,44 @@
+<html>
+
+<head>
+  <title>Messenger</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"
+    integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <section>
+    <h1>Messenger</h1>
+    <p>Users online: <span id="users-online"></span></p>
+    <input type="text" id="input" autofocus />
+    <input type="submit" id="send" value="Send" />
+    <div id="messages"></div>
+  </section>
+</body>
+<script type="text/javascript">
+  const socket = io('localhost:3001');
+
+  socket.on('update-online', ({ usersOnline }) => {
+    document.getElementById('users-online').textContent = usersOnline;
+  });
+
+  socket.on('server-msg', ({ user, msg }) => {
+    const message = document.createElement('p');
+    const msgUser = document.createElement('b');
+    msgUser.textContent = `${user}: `;
+    const msgSpan = document.createElement('i');
+    msgSpan.textContent = msg;
+    message.append(msgUser, msgSpan);
+    document.getElementById('messages').append(message);
+  });
+
+  document.getElementById('send').onclick = () => {
+    const input = document.getElementById('input');
+    socket.emit('client-msg', { msg: input.value });
+    input.value = '';
+  };
+
+</script>
+
+</html>
