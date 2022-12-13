@@ -1,0 +1,58 @@
+<html>
+
+<head>
+  <title>File manager</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"
+    integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <section>
+    <h1>File manager</h1>
+    <p>Users online: <span id="users-online"></span></p>
+    <ul id="file-links"></ul>
+    <pre id="file"></pre>
+  </section>
+</body>
+<script type="text/javascript">
+  const createLinks = (arr, curUrl) => {
+    const url = (curUrl.endsWith('/')) ? curUrl.substring(0, curUrl.length - 1) : curUrl;
+    return arr.map((item) => {
+      const link = document.createElement('a');
+      link.textContent = item;
+      link.href = `${url}/${item}`;
+      link.className = 'link';
+      const listItem = document.createElement('li');
+      listItem.append(link);
+      return listItem;
+    });
+  };
+
+  const socket = io('localhost:3000');
+
+  socket.on('update-online', ({ usersOnline }) => {
+    document.getElementById('users-online').textContent = usersOnline;
+  });
+
+  socket.on('update-links', ({ links }) => {
+    document.getElementById('file-links')
+      .replaceChildren(...createLinks(links, window.location.pathname));
+  });
+
+  socket.on('update-file', ({ file }) => {
+    document.getElementById('file').textContent = file;
+  });
+
+  document.getElementsByClassName('link').onclick = (e) => {
+    const url = new URL(window.location);
+    url.pathname = e.target.href;
+    window.history.pushState({}, '', url);
+    socket.emit('click-link', { link: e.target.href });
+  };
+
+  socket.emit('click-link', { link: window.location.pathname });
+
+</script>
+
+</html>
